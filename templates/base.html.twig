@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+   {% block stylesheets %}
+    
+  
+    <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+      <header>
+          <nav>
+              <a href="{{ path('app_home') }}" style="padding-left:50px;">
+                    <img src="{{ asset('images/logofinal.png') }}" alt="Votre Logo" width="70" height="70" class="d-inline-block align-top">
+              </a>
+                <ul class="ulnav">
+                  
+                     {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                      <li >
+                             <a class="navLien btn-custom" href="{{ path('app_creneaux_new') }}">AddCréneau</a>
+                      </li> 
+                      <li >
+                             <a class="navLien btn-custom" href="{{ path('app_creneaux_index') }}">CreneauList</a>
+                      </li> 
+                      <li>
+                             <a class="navLien btn-custom" href="{{ path('app_permis') }}">AddPermis</a>
+                      </li> 
+                      <li>
+                             <a class="navLien btn-custom" href="{{ path('app_permisliste') }}">PermisList</a>
+                      </li> 
+                      <li>
+                             <a class="navLien btn-custom" href="{{ path('app_user') }}">AddUser</a>
+                      </li> 
+                      <li>
+                             <a class="navLien btn-custom" href="{{ path('app_userliste') }}">UsersList</a>
+                      </li> 
+                      {% endif %}
+                      <li>
+                        {% if app.user %}
+                          <a class="navLien btn-custom" aria-current="page" href="{{ path('app_logout') }}">LogOut</a>
+                           <li class="nav-item">
+                        {% else %}
+                          <li>
+                             <a class="navLien btn-custom" href="{{ path('app_user') }}">Register</a>
+                         </li> 
+                          <li class="nav-item">
+                             <a class="navLien btn-custom" href="{{ path('app_login') }}">Login</a>
+                         </li> 
+                        {% endif %}
+                      </li>
+                       {# <li >
+                          <a class="navLien" href="#">About</a>
+                      </li>  #}
+                      {% if app.user and 'ROLE_ELEVE' in app.user.roles %}
+                        <li>
+                          <a  href="{{ path('app_cart') }}">
+                            <span id="nombre">{{ app.session.get('nb') }}</span>
+                            <i class="fas fa-shopping-cart"></i>
+                          </a>
+                        </li>
+                      {% endif %}
+                  </ul>
+          </nav>
+      </header>
+      {% for label, messages in app.flashes %}
+          {% for message in messages %}
+              <div class="alert alert-{{ label }}">
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endfor %}
+       <div id='deja_panier'>
+        </div>
+    {% block body %}
+    {% endblock %}
+    
+    {% block javascripts %} {% endblock %}
+  </body>
+</html>
+ 

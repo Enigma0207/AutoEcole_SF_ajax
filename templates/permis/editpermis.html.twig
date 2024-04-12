@@ -1,0 +1,50 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les permis{% endblock %}
+
+{% block body %}
+{% if not app.user or 'ROLE_ADMIN' not in app.user.roles %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'avez pas les droits d'accéder à cette page.
+        </div>
+{% else %}
+        <div class="MinWidthGeneral">
+        <div class="permisEditH4">
+                <h4>Permit Form</h4>
+        </div>
+            <div class="permisForm">
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+        
+        
+            <div class="form-group">
+                {{ form_label(form.type, 'Type:', {'label_attr': {'class': 'text_divType1f'}}) }}
+                {{ form_widget(form.type, {'attr': {'class': 'form-control', 'placeholder': 'Type de permis...'}}) }}
+            </div>
+        
+            <div class="form-group">
+                {{ form_label(form.price, 'Price:', {'label_attr': {'class': 'textprice1'}}) }}
+                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Le prix...'}}) }}
+            </div>
+        
+            <div class="form-group">
+                {{ form_label(form.description, 'Description:', {'label_attr': {'class': 'text_desc1'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'La description...'}}) }}
+            </div>
+        
+            <div class="form-group">
+                {{ form_label(form.image, 'Image:', {'label_attr': {'class': 'text_im1f'}}) }}
+                {{ form_widget(form.image, {'attr': {'class': 'form-control', 'placeholder': 'Description...'}}) }}
+            </div>
+        
+            <div class="btnPermisEditForm">
+                <button type="submit" class="btn btn-custom">Register</button>
+            </div>
+        
+            {{ form_end(form) }}
+           </div>
+        
+        </div>
+         {% include 'footer.html.twig' %}
+    {% endif %}
+{% endblock %}

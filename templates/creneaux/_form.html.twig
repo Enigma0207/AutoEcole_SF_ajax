@@ -1,0 +1,12 @@
+{% if 'ROLE_ADMIN' not in app.user.roles %}
+    <div class="alert alert-danger" role="alert">
+        Vous n'avez pas les droits d'accéder à cette page.
+    </div>
+{% else %}
+{# {{ form_start(form) }}
+    {{ form_widget(form) }}  
+    <button class="btnFormCreneaux">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }} #}
+{% endif %}
+
+

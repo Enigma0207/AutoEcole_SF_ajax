@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du Permis{% endblock %}
+
+{% block body %}
+    <div class="MinWidthGeneral">
+        <div class="generalH4Detail " >
+           <h4>Détail Permis</h4>
+        </div>
+        <div class="card" style="width: 500px; margin:auto;margin-top: 20px;">
+            <img src="{{ asset('images/' ~ permis.image) }}" class="card-img-top" alt="{{ permis.id }}">
+            <div class="card-body">
+                 <h5 class="card-title">{{ permis.type | default('') | upper }}</h5>
+                 <h5 class="card-text">€{{ permis.price }}</h5>
+                 <p class="card-text">{{ permis.description }}</p>
+                 <a href="{{ path('app_home') }}" class="btn userLien" style="text-decoration: none;">Retour</a>
+            </div>
+        </div>
+   </div>
+    {% include 'footer.html.twig' %}
+{% endblock %}

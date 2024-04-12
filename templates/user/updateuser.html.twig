@@ -1,0 +1,23 @@
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Mettre à jour l'utilisateur{% endblock %}
+
+{% block body %}
+{% if 'ROLE_ADMIN' not in app.user.roles %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'avez pas les droits d'accéder à cette page.
+        </div>
+{% else %}
+    <h2>Mettre à jour l'utilisateur</h2>
+    {{ form_start(form, {'method': 'POST'}) }}
+        {{ form_row(form.firstname) }}
+        {{ form_row(form.lastname) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.email) }}
+
+        <button type="submit">Update</button>
+    {{ form_end(form) }}
+    
+    <a href="{{ path('app_userliste') }}">list</a>
+     {% endif %}
+{% endblock %} #}

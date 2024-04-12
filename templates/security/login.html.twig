@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+<div class="MinWidthGeneral">
+    <div class="container">
+        <div class="generalLoginH4">
+           <h4>Please sign in</h4>
+       </div>
+        <form method="post" class="loginForm">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+    
+            {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+            {% endif %}
+    
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Email:</label>
+                <input type="email" class="form-control" value="{{ last_username }}" name="email" autocomplete="email" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="inputPassword" class="form-label loginF2">Password:</label>
+                <input type="password" class="form-control" name="password" autocomplete="current-password" required>
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button class='btn btn-primary loginBtn' type="submit">Sign in</button>
+        </form>
+    </div>
+</div>
+
+{# <div class="marquee mt-3">
+    <h1>XXX</h1>
+</div> #}
+ {% include 'footer.html.twig' %}
+{% endblock %}

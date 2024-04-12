@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Creneaux index{% endblock %}
+
+{% block body %}
+{% if app.flashes('error') %}
+    <div class="alert alert-danger" role="alert">
+        {% for flash_message in app.flashes('error') %}
+            {{ flash_message }}
+        {% endfor %}
+    </div>
+{% elseif app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+        {% for flash_message in app.flashes('success') %}
+            {{ flash_message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if not app.user %}
+    <div class="alert alert-danger" role="alert">
+        Vous n'êtes pas autorisé à accéder à cette page.
+    </div>
+{% else %}
+    <div class="MinWidthGeneral">
+        <div class="creneauxGeneral">
+            <h2>Creneaux List</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                   <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Is Available</th>
+                            <th scope="col">Moniteur</th>
+                            {% if is_granted('ROLE_ELEVE') %}
+                            <th scope="col">Elève</th>
+                            {% else %}
+                                <th>Elèves</th>
+                            {% endif %}
+                            <th scope="col">Type</th>
+                            <th scope="col">Price:€</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    {% for creneau in creneauxes %}
+                        {% if creneau.isAvailable or (creneau.userEleve is defined and creneau.userEleve.id is defined and creneau.userEleve.id == app.user.id) or is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR') %}
+
+                            <tr>
+                                <td>{{ creneau.date ? creneau.date|date('Y-m-d H:i:s') : '' }}</td>
+                                <td>{{ creneau.isAvailable ? 'Yes' : 'No' }}</td>
+                                <td>{{ creneau.user is not null ? creneau.user.firstname : '' }}</td>
+                                
+                                {% if is_granted('ROLE_ELEVE') %}
+                                    {% if creneau.userEleve.id is defined and creneau.userEleve.id == app.user.id %}
+                                        <td>{{ app.user.firstname }}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                {% elseif is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR') %}
+                                    <td>{{ creneau.userEleve.id is defined ? creneau.userEleve.firstname : '' }}</td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+    
+                                <td>{{ creneau.permis.type }}</td>
+                                <td>{{ creneau.permis.price }}</td>
+                                <td>
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        {% if creneau.isAvailable %}
+                                            <a class="btn userLien" href="{{ path('app_creneaux_edit', {'id': creneau.id}) }}">Edit</a>
+                                            <a class="btn userLien" href="{{ path('app_creneaux_delete', {'id': creneau.id}) }}">Delete</a>
+                                        {% elseif not creneau.isAvailable %}
+                                            <a class="btn userLienDelet" href="{{ path('app_cancel', {'id': creneau.id}) }}">Annuler</a>
+                                        {% endif %}
+                                        {# {{ dump(app.session.get('cart')[ creneau.id ])}} #}
+                                    {% elseif 'ROLE_ELEVE' in app.user.roles %}
+                                        {% if creneau.isAvailable %}
+                                            {% if (app.session.get('cart')[ creneau.id ] is not defined) %}
+                                                <a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" data-id-creneau = "{{creneau.id}}" id="reserver_{{creneau.id}}" class="btn ajax">Réserver</a>
+                                                <span id="pris_{{ creneau.id }}" style="display: none;">pris</span>
+                                            {% else %}
+                                                <span> pris</span>    
+                                            {% endif %} 
+                                        {% else %}
+                                            <span> Réservé</span>    
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7">No records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="crenauxA">          
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    <a class="btn btn-custom" href="{{ path('app_creneaux_new') }}">Create new</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+     {% include 'footer.html.twig' %}
+{% endif %}
+{% endblock %}
+
+{% block javascripts %} 
+{# <script>
+$( document ).ready(function() {
+    $("a.ajax").on("click", (evtClick) => {
+        evtClick.preventDefault();
+        var href = evtClick.target.getAttribute("href");
+        var id_creneau = $('.ajax').data("idCreneau");
+        
+        $.ajax({
+        url: href,
+        dataType: "json",
+        success: (response) => {
+            $("#nombre").html(response.nb);
+            $("#deja_panier").addClass("alert alert-success");
+            $("#deja_panier").html(response.message);
+            $("#reserver_"+id_creneau).after("<span> Réservé</span>"); 
+            $("#reserver_"+id_creneau).remove();
+        },
+        error: (jqXHR, status, error) => {
+            console.log("ERREUR AJAX", status, error);
+        },
+        });
+    });
+});
+
+</script> #}
+
+<script>
+$(document).ready(function() {
+    $("a.ajax").on("click", function(evtClick) {
+        evtClick.preventDefault();
+        var href = $(this).attr("href");
+        var id_creneau = $(this).data("id-creneau");
+        
+        $(this).hide();
+        $("#pris_" + id_creneau).show();
+        
+        $.ajax({
+            url: href,
+            dataType: "json",
+            success: function(response) {
+                $("#nombre").html(response.nb);
+                $("#deja_panier").addClass("alert alert-success").html(response.message);
+            },
+            error: function(jqXHR, status, error) {
+                console.log("ERREUR AJAX", status, error);
+            },
+        });
+    });
+});
+</script>
+
+{% endblock %}

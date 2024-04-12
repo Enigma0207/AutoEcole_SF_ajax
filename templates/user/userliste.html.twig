@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}my list!{% endblock %} 
+{% block body %}
+{% if app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+        {% for flash_message in app.flashes('success') %}
+            {{ flash_message }}
+        {% endfor %}
+    </div>
+{% endif %}
+{% if not app.user or 'ROLE_ADMIN' not in app.user.roles %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'avez pas les droits d'accéder à cette page.
+        </div>
+{% else %}
+    <div class="MinWidthGeneral">
+        <div class="userGeneral">
+            <div class="generalListH4">
+                <h4>Les utilisateurs</h4>
+            </div>
+            <table class="table table-striped table-hover usertable">
+                <thead>
+                    <tr>
+                        <th scope="col">Firstname</th>
+                        <th scope="col">Lastname</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Roles</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user1 in user %}
+                        <tr>
+                            <td>{{ user1.firstname | default('') | upper }}</td>
+                            <td>{{ user1.lastname | default('') | upper }}</td>
+                            <td>{{ user1.phone }}</td>
+                            <td>{{ user1.email }}</td>
+                            <td>
+                                {% if user1.roles is iterable %}
+                                    {{ user1.roles | join(', ') }}
+                                {% else %}
+                                    {{ user1.roles }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn userLien" href="{{ path('app_edit_user', {'id': user1.id}) }}">Edit</a>
+                                <a class="btn userLienDelet" href="{{ path('app_user_delete', {'id': user1.id}) }}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+     {% endif %}
+      {% include 'footer.html.twig' %}
+{% endblock %}

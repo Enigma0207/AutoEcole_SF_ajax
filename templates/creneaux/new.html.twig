@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire Creneaux{% endblock %}
+
+{% block body %}
+    {% if not app.user or 'ROLE_ADMIN' not in app.user.roles %}
+        <div class="alert alert-danger" role="alert">
+                Vous n'avez pas les droits d'accéder à cette page.
+        </div>
+    {% else %}
+        <div class="MinWidthGeneral">
+           <div class="creneauH4">
+               <h4 id="h4Creneau">Creneaux Form</h4>
+            </div>
+           <div class="container">
+                <div class="creneauxForm">
+                    {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.date, 'Date:', {'label_attr': {'class': ''}}) }}
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control', 'placeholder': 'Date ...'}}) }}
+                    </div>
+                    <div class="form-group">
+                        <div class="creneauTypeLabel">
+                            {{ form_label(form.permis, 'Type:', {'label_attr': {'class': ''}}) }}
+                        </div>
+                        {{ form_widget(form.permis, {'attr': {'class': 'form-control custom-style', 'placeholder': 'Date ...'}}) }}
+                    </div>
+                    <div class="form-group">
+                        <div class="creneauFirst">
+                            {{ form_label(form.user, 'Moniteur:', {'label_attr': {'class': ''}}) }}
+                        </div>
+                        {{ form_widget(form.user, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-custom">Register</button>
+                        {# <a href="{{ path('app_creneaux_index') }}" class="btn btn-secondary"><span>&#128412;</span>List</a> #}
+                    </div>
+                    {{ form_end(form) }}
+                    </div>
+                </div>
+        </div>
+         {% include 'footer.html.twig' %}
+    {% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello liste permis!{% endblock %}
+
+{% block body %}
+
+
+{% if app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+        {% for flash_message in app.flashes('success') %}
+            {{ flash_message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if not app.user or 'ROLE_ADMIN' not in app.user.roles %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'avez pas les droits d'accéder à cette page.
+        </div>
+    {% else %}
+    <div class="generalPermis">
+        <h4>La liste des permis</h4>
+       <div class="row row-cols-1 row-cols-md-3 g-2 mx-auto" style="max-width: 900px;">
+        {% for permis1 in permis %}
+            <div class="col">
+                <div class="card">
+                    {% if permis1.image %}
+                    <img src="{{ asset('images/' ~ permis1.image) }}" class="card-img-top" alt="{{ permis1.id }}">
+                    {% else %}
+                      Pas d'image
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ permis1.type }}</h5>
+                        <h5 class="card-title">{{ permis1.price | default('') | upper }}<span>€</span></h5>
+                        <p class="card-text">{{ permis1.description | default('') | upper }}</p>
+                        <a class="btn userLien" href="{{ path('app_edit_permis', {'id': permis1.id}) }}">Edit</a>
+                        <a class="btn userLienDelet" href="{{ path('app_permis_delete', {'id': permis1.id}) }}">Delete</a>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    
+</div>
+ {% include 'footer.html.twig' %}
+{% endif %}
+{% endblock %}
+
+
