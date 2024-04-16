@@ -31,17 +31,17 @@ class Cart
     {
         $cart = $this->requestStack->getSession()->get('cart', []);
     
-    if (empty($cart[$id])) {
+       if (empty($cart[$id])) {
         $cart[$id] = 1;
-    } else {    
+       } else {    
         // Retourner false pour indiquer que la redirection ne doit pas être effectuée
         return false;
-    }
-    
-    $this->requestStack->getSession()->set('cart', $cart);
+       }
+       //La méthode set est utilisée pour associer le tableau $cart à la clé 'cart' dans la session.
+       $this->requestStack->getSession()->set('cart', $cart);
 
-    // Retourner true pour indiquer que la redirection doit être effectuée
-    return true;
+      // Retourner true pour indiquer que la redirection doit être effectuée
+      return true;
     }
 
 
@@ -131,4 +131,3 @@ class Cart
     }
 
 }
-

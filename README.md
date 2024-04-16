@@ -1228,11 +1228,13 @@ class Cart
 {
     private $requestStack;
     private $repository;
+
     //ces deux proprietés sont(private), ce qui signifie qu'elles ne sont directement accessibles que depuis l'intérieur de la classe Cart. Cela suit le principe d'encapsulation, où les détails internes d'une classe sont cachés à l'extérieur de celle-ci, et l'accès à ces détails se fait via des méthodes publiques ou des accesseurs (getters et setters) définis dans la classe.
 
    //Constructeur : Le constructeur est appelé lorsqu'une instance de la classe Cart est créée. Il prend deux paramètres en injection de dépendances :  
 
     //$requestStack : C'est un service Symfony qui permet d'accéder à la requête actuelle et à la session associée.
+
      $repository : C'est une instance de CreneauxRepository,  Le repository est utilisé pour interagir avec la base de données Doctrine et récupérer des informations sur les créneaux..
 Ces dépendances sont nécessaires pour interagir avec la session et la base de données.
 
@@ -1249,6 +1251,9 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
      * @param int $id
      * @return void
      */
+
+     //Cette ligne déclare une méthode publique appelée addToCart, qui prend un paramètre $id de type int. Cette méthode est utilisée pour ajouter un élément au panier.
+     
     public function addToCart(int $id):void
     {
         // manière de récupérer le contenu de la session associée à l'objet RequestStack dans Symfony,
@@ -1259,7 +1264,7 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
         $cart = $this->requestStack->getSession()->get('cart', []);
         
         if (empty($cart[$id])) {
-            //si l'element identifié n"xiste pas dans le panier,donner la valeur 1 à la quantité
+            //si l'element identifié n"existe pas dans le panier,donner la valeur 1 à la quantité
             $cart[$id] = 1;
             //si cela existe deja dans le panier, ajouter à la qté existante
         } else {
@@ -1804,44 +1809,7 @@ $( document ).ready(function() {
 });
 
 
-vfgkfgffgfgv
-kjbhhghgfggt
-vfejfhhfgfjvhffhv
 
 
-<!-- 
-
-public function validateCreneaux(EntityManagerInterface $entityManager, Cart $cart): Response
-{
-    $cartCreneaux = $cart->getDetails();
-    $creneaux = $cartCreneaux['creneaux'];
-
-    $entityManager->beginTransaction(); // Début de la transaction
-
-    try {
-        foreach ($creneaux as $infoCreneau) {
-            $creneau = $infoCreneau['creneau'];
-            
-            if ($creneau->isIsAvailable()) {
-                $creneau->setIsAvailable(false);
-                $user = $this->getUser(); 
-                $creneau->setUserEleve($user);
-                $entityManager->persist($creneau);
-            }
-        }
-
-        $entityManager->flush(); // Enregistrement des modifications dans la base de données
-        $entityManager->commit(); // Validation de la transaction
-
-        $cart->remove(); // Vidage du panier après validation
-        $this->addFlash('success', 'Vos créneaux sont validés.');
-    } catch (\Exception $e) {
-        $entityManager->rollback(); // Annulation de la transaction en cas d'erreur
-        $this->addFlash('error', 'Une erreur est survenue lors de la validation des créneaux.');
-    }
-
-    return $this->redirectToRoute('app_creneaux_index');
-}
 
 
- -->

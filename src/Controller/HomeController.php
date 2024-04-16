@@ -31,7 +31,7 @@ class HomeController extends AbstractController
              throw $this->createNotFoundException('Permis not found for id ' . $id);
          }
      
-         return $this->render('home/detail.html.twig', [
+        return $this->render('home/detail.html.twig', [
              'permis' => $permis,
          ]);
      }
