@@ -50,23 +50,10 @@ class CartController extends AbstractController
         //}
         $session->set('nb', $nb);
 
-        // if(!$booleanResult) {
-        //     $this->addFlash(
-        //     'notice',
-        //     'Vous avez déjà réservé ce creneaux.'
-        // );
-        // } else {
-        //     $this->addFlash(
-        //     'notice',
-        //     'Vous avez bien réservé ce creneaux.'
-        // );
-        // }
+        
         $message = "Vous avez bien réservé ce creneaux.";
-        // $response = new Response();
-        // $response->headers->setCookie(new Cookie('nb', json_encode($nb)));
-        // $response->send();
+      
         return $this->json(["nb" => $nb, 'message' => $message]);
-        // return $this->redirectToRoute('cart');
     }
 
     /**
@@ -75,15 +62,9 @@ class CartController extends AbstractController
      * @param int $id
      * @return Response
      */
-    // #[Route('/panier/réduire/{id}', name: 'decrease_item')]
-    // public function decrease(Cart $cart, int $id): Response
-    // {
-    //     $cart->decreaseItem($id);
-    //     return $this->redirectToRoute('cart');
-    // }
+   
 
-
-    #[Route('/panier/supprimer/{id}', name: 'remove_item')]
+    #[Route('/panier/remove/{id}', name: 'remove_item')]
     public function removeItem(Cart $cart, int $id): Response
     {
         $cart->removeItem($id);
@@ -97,8 +78,8 @@ class CartController extends AbstractController
      * @param Cart $cart
      * @return Response
      */
-    #[Route('/panier/supprimer/', name: 'remove_cart')]
-    public function remove(Cart $cart): Response
+    #[Route('/panier/reinitialiser/', name: 'reini_cart')]
+    public function reinitialiser(Cart $cart): Response
     {
         $cart->remove();
         return $this->redirectToRoute('app_creneaux_index');

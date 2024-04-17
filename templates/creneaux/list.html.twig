@@ -109,31 +109,7 @@
 {% endblock %}
 
 {% block javascripts %} 
-{# <script>
-$( document ).ready(function() {
-    $("a.ajax").on("click", (evtClick) => {
-        evtClick.preventDefault();
-        var href = evtClick.target.getAttribute("href");
-        var id_creneau = $('.ajax').data("idCreneau");
-        
-        $.ajax({
-        url: href,
-        dataType: "json",
-        success: (response) => {
-            $("#nombre").html(response.nb);
-            $("#deja_panier").addClass("alert alert-success");
-            $("#deja_panier").html(response.message);
-            $("#reserver_"+id_creneau).after("<span> Réservé</span>"); 
-            $("#reserver_"+id_creneau).remove();
-        },
-        error: (jqXHR, status, error) => {
-            console.log("ERREUR AJAX", status, error);
-        },
-        });
-    });
-});
 
-</script> #}
 
 <script>
 $(document).ready(function() {

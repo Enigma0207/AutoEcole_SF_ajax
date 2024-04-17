@@ -10,7 +10,7 @@
       <p>Mon Panier</p>
       {% if cart is not empty %}
         {% if totalQuantity > 0 %}
-          <a href="{{ path('remove_cart') }}" title="Supprimer tous les articles" class="btn btn-outline-danger btn-sm float-right">
+          <a href="{{ path('reini_cart') }}" title="Réinitialiser le panier" class="btn btn-outline-danger btn-sm float-right">
             <i class="bi bi-x"></i>
             Réinitialiser mon panier
           </a>
@@ -32,9 +32,9 @@
                 <td class="align-middle">{{ creneau.date|date('m/d/Y') }}</td>
                 <td class="align-middle">{{ creneau.permis.type }}</td>
                 <td class="align-middle">{{ creneau.user.firstname }}</td>
-                <td class="align-middle">{{ (creneau.permis.price / 100)|number_format(2, ',', '.') }} €</td>
+                <td class="align-middle">{{ (creneau.permis.price)}} €</td>
                 <td>
-                  <a title="Supprimer cet article" href="{{ path('remove_item', { id: creneau.id }) }}" class="text-danger d-inline-block"><i class="fas fa-trash-alt" style="color: red;" data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer"></i></a>
+                  <a  href="{{ path('remove_item', { id: creneau.id }) }}" class="text-danger d-inline-block"><i class="fas fa-trash-alt" style="color: red;" data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer l'article"></i></a>
                 </td>
               </tr>
             {% endfor %}
@@ -46,8 +46,8 @@
             <td class="text-center">
               <small>x</small> {{ totalQuantity }}
             </td>
-            <th>{{ (totalPrice / 100)|number_format(2, ',', '.') }} €</th>
-            <td></td>
+            <th>{{ (totalPrice ) }} €</th>
+            {# <td></td> #}
           </tfoot>
         </table>
         <a href="{{ path('app_creneaux_index') }}" class="btn btn-custom-green">Continuez mes achats</a>

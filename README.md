@@ -1279,13 +1279,19 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
      *
      * @return array
      */
+
      //1.$this->requestStack:permet d'acceder à la session
-     2.getSession(): recupere la session
-     3.->get('cart');:recupererle contenu du panier stocker dans la session
+      2.getSession(): recupere la session
+      3.->get('cart');:recupererle contenu du panier stocker dans la session en utilisant la clé 'cart'
+      4. retourne un trableau associatif
+
+
     public function get(): array
     {
         return $this->requestStack->getSession()->get('cart');
     }
+
+
     /**
      * Supprime entièrement le panier en session
      *
@@ -1316,53 +1322,28 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
         unset($cart[$id]);
         $this->requestStack->getSession()->set('cart', $cart);
     }
-    /**
-     * Diminue de 1 la quantité d'un produit
-     *
-     * @param int $id
-     * @return void
-     */
 
-     //1.decreaseItem:Elle gère la diminution de la quantité d'un produit plutôt que la suppression totale
-     //2.$cart = $this->requestStack->getSession()->get('cart', []);:Récupère le panier actuel depuis la session Symfony. Si le panier n'existe pas, un tableau vide est utilisé par défaut. 
-     3.Si la quantité du produit est inférieure à 2, l'élément lié a l'id est complètement supprimé.
-     4.sinon décremente le
-     5.$this->requestStack->getSession()->set('cart', $cart):on obtient l'objet de session associé à la requête actuelle. Ensuite, la méthode set est utilisée pour mettre à jour la variable de session 'cart' avec le tableau du panier modifié.
-
-    public function decreaseItem(int $id): void
-    {
-        $cart = $this->requestStack->getSession()->get('cart', []);
-        if ($cart[$id] < 2) {
-            $this->requestStack->getSession();
-            unset($cart[$id]);
-        } else {
-            $cart[$id]--;
-        }
-        $this->requestStack->getSession()->set('cart', $cart);
-    }
     /**
-     * Récupère le panier en session, puis récupère les objets produits de la bdd
+     * Récupère le panier en session, puis récupère les objets creneau de la bdd
      * et calcule les totaux
      *
      * @return array
      */
     public function getDetails(): array
     {
-        //Un tableau vide est initialisé pour stocker les détails du panier. Il contient deux clés : 'creneaux' pour stocker les créneaux du panier, et 'totals' pour stocker la quantité totale et le prix total des créneaux.
-        $cartCreneaux = [
-            'creneaux' => [],
-            'totals' => [
-                'quantity' => 0,
-                'price' => 0,
-            ],
-        ];
-     //// Récupération du panier depuis la session Symfony avec la method get
+        //Un tableau vide est initialisé pour stocker les détails du panier. Il contient deux clés : 'creneaux' pour stocker les objets créneaux du panier, et 'totals' pour stocker la quantité totale et le prix total des créneaux.
+
+        $cartCreneaux = ['creneaux' => [],'totals' => ['quantity' => 0,'price' => 0,],]
+
+     //// Récupération du panier depuis la session Symfony avec la method get en utilisant la clé cart.
+
         $cart = $this->requestStack->getSession()->get('cart', []);
         if ($cart) {
-            //Une boucle foreach parcourt chaque élément du panier, où chaque élément correspond à une paire clé-valeur (ID du créneau et quantité).
-            foreach ($cart as $id => $quantity) {
-                //Pour chaque ID du panier, la méthode $this->repository->find($id)rechercher le créneau associé dans le repository
 
+            // // Itération sur chaque élément du panier ($cart) où $id est l'identifiant du créneau et $quantity est sa quantité
+
+            foreach ($cart as $id => $quantity) {
+                 // Récupération de l'objet créneau correspondant à l'identifiant de l'article dans le panier en utilisant le CreneauxRepository
                 $currentCreneau = $this->repository->find($id);
 
                 //Si le créneau est trouvé, ses détails (objet $currentCreneau) sont ajoutés au tableau 'creneaux' avec la quantité correspondante.
@@ -1373,7 +1354,12 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
                     ];
                     //Les totaux 'quantity' et 'price' du panier sont mis à jour en fonction de la quantité et du prix du créneau actuel.
 
+                  //Ajout de la quantité de l'article ajouté au total de la quantité du panier
+                  
                     $cartCreneaux['totals']['quantity'] += $quantity;
+
+                    //C'est le calcul du prix total de l'article ajouté au panier. Il multiplie la quantité de l'article ajouté ($quantity) par le prix unitaire de cet article ($currentCreneau->getPermis()->getPrice()).
+
                     $cartCreneaux['totals']['price'] += $quantity * $currentCreneau->getPermis()->getPrice();
                 }
             }
