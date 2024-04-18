@@ -21,8 +21,7 @@ class CartController extends AbstractController
     public function index(Cart $cart): Response
     {
         $cartCreneaux = $cart->getDetails();
-        // dd($cartCreneaux);
-        // $session->remove('nb');
+       
         $vide = (empty ($cartCreneaux['creneaux'])) ? "Votre panier est vide" : "";
         return $this->render('cart/cart.html.twig', [
             'cart' => $cartCreneaux['creneaux'] ?? [],
@@ -40,19 +39,19 @@ class CartController extends AbstractController
      */
     #[Route('/panier/ajouter/{id}', name: 'add_to_cart')]
     public function add(Cart $cart, int $id, SessionInterface $session): Response
-    {
-        // $booleanResult = $cart->addToCart($id);
+    {  
+        //meth addToCart est aplé depuis le service pour ajouter le crénau par son id au panier
         $cart->addToCart($id);
+        //méth getDetails est aplé pour récup les détail du panier après ajout
         $cartDetails = $cart->getDetails();
-        $nb = 0;
-        //foreach ($cartDetails['totals']['quantity'] as $value) {
-            $nb += $cartDetails['totals']['quantity'];
-        //}
-        $session->set('nb', $nb);
-
         
+        $nb = 0;
+        //on ajoute à $nb la qté du créneau ajouté au panier
+        $nb += $cartDetails['totals']['quantity'];
+        //Cette ligne met à jour la variable de session 'nb' avec la nouvelle valeur de $nb, qui représente la nouvelle quantité totale d'articles dans le panier.
+        $session->set('nb', $nb);
         $message = "Vous avez bien réservé ce creneaux.";
-      
+       //retour une reponse json avec la clé nb(nouvelle qté tot d créneaus dans le panier)et la clé message 
         return $this->json(["nb" => $nb, 'message' => $message]);
     }
 

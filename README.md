@@ -1367,6 +1367,64 @@ Ces dépendances sont nécessaires pour interagir avec la session et la base de 
         return $cartCreneaux;
     }
 }
+
+
+public function removeItem(int $id): void
+    {
+        //Cette ligne récupère le panier actuel à partir de la session. Si aucun panier n'existe encore, un tableau vide est retourné par défaut.
+
+        $cart = $this->requestStack->getSession()->get('cart', []);
+
+        //Cette ligne appelle la méthode getDetails() pour récupérer les détails du panier, notamment les créneaux qui s'y trouvent ainsi que les totaux.
+
+        $cartDetails = $this->getDetails();
+
+     //Cette boucle itère sur chaque créneau dans les détails du panier. $key représente l'indice du créneau dans le tableau, et $creneau représente l'objet créneau lui-même.
+
+        foreach ($cartDetails['creneaux'] as $key => $creneau) {
+
+         //vérifie si l'identifiant du créneau actuel dans la boucle ($creneau->getId()) est égal à l'identifiant de l'article que vous souhaitez supprimer ($id).
+
+         // si le créneau actuel dans le panier correspond à l'article que vous souhaitez supprimer, 
+
+            if ($creneau->getId() == $id) {
+
+                //grace à la fonction unset,on supprime le créneau actuel du panier en utilisant l'indice $key dans le tableau $cartDetails['creneaux']
+
+                unset($cartDetails['creneaux'][$key]);
+
+                //on accède à la session encours pour récupèrer la valeur de la clé nombre(nombre d'zrticle stoker dans la session) si cela n'existe pas , on aura 0 comme valeur par defaut.
+
+                $nb = $this->requestStack->getSession()->get('nb', 0);
+                if ($nb > 0) {
+                    $nb--;
+                    if ($nb > 0) {
+                        $this->requestStack->getSession()->set('nb', $nb);
+                    } else {
+                        $this->requestStack->getSession()->remove('nb'); // Supprimer la variable 'nb' si elle est égale à zéro
+                    }
+                }
+
+                // Mise à jour des totaux
+
+                 //si les totaux du panier existent.
+                if (isset ($cartDetails['totals'])) {
+                 //On décrémente la quantité totale d'articles dans les totaux du panier.
+                    $cartDetails['totals']['quantity']--;
+
+                //n soustrait du prix total du panier le prix de l'article que l'on va supprimer.
+
+                    $cartDetails['totals']['price'] -= $creneau->getPermis()->getPrice();
+                }
+                ////supprimer l'article du panier en utilisant son identifiant comme clé dans le tableau $cart
+                unset($cart[$creneau->getId()]);
+
+                ////met à jour le panier en session avec le nouveau panier où l'article a été supprimé.
+                $this->requestStack->getSession()->set('cart', $cart);
+                return; // Sortir de la boucle une fois que l'élément est supprimé
+            }
+        }
+    }
 ************************************************
 ************************************GIT **********************************
 1. git add .
@@ -1688,15 +1746,26 @@ public function addToCart(int $id):void
  //Cette annotation indique que cette méthode du contrôleur est associée à la route /mon-panier et que le nom de la route est 'app_cart'
     #[Route('/mon-panier', name: 'app_cart')]
 
-//La méthode accepte en paramètre une instance du service Cart
+// cette léthode gère l'affichage du contenu du panier utilisateur.
+//La méthode accepte en paramètre une instance du service Cart et retourne une reponse du type response
+
     public function index(Cart $cart): Response
     {
 
-//La méthode getDetails du service Cart est appelée pour obtenir les détails du panier, tels que les créneaux, la quantité totale et le prix total.
-        $cartCreneaux = $cart->getDetails();/
+  //La méthode getDetails du service Cart est appelée pour obtenir les détails du panier, tels que les créneaux, la quantité totale et le prix total.
 
-//pour générer la réponse en rendant le template Twig 'cart/cart.html.twig' et en passant des données à utiliser dans le template. Ces données comprennent le tableau des créneaux du panier ('cart'), la quantité totale ('totalQuantity'), et le prix total ('totalPrice').
-return $this->render('cart/cart.html.twig', [
+        $cartCreneaux = $cart->getDetails();
+
+    //Si le tableau des créneaux est vide, cela signifie que le panier est vide, et dans ce cas, la variable $vide est définie sur "Votre panier est vide".
+        $vide = (empty ($cartCreneaux['creneaux'])) ? "Votre panier est vide" : "";
+
+    //Cette ligne renvoie une réponse HTTP rendue à partir du template 'cart/cart.html.twig' avec les données fournies sous forme de tableau associatif. 
+    //Les données envoyées au template comprennent :
+    **'cart': Le contenu du panier, c'est-à-dire les créneaux sélectionnés.
+    **'totalQuantity': La quantité totale d'articles dans le panier.
+    **'totalPrice': Le prix total de tous les articles dans le panier.
+    **'vide': Un message indiquant si le panier est vide ou non.
+    return $this->render('cart/cart.html.twig', [
             'cart' => $cartCreneaux['creneaux'],
             'totalQuantity' => $cartCreneaux['totals']['quantity'],
             'totalPrice' =>$cartCreneaux['totals']['price']
@@ -1706,48 +1775,65 @@ return $this->render('cart/cart.html.twig', [
 
 2.add:AJOUTER UN ARTICLE
 
-//La méthode utilise l'injection de dépendance pour recevoir une instance de la classe Cart en tant que paramètre, ainsi qu'un entier $id correspondant à l'identifiant de l'article à ajouter au panier.
+//La méthode utilise l'injection de dépendance pour recevoir une instance de la classe Cart en tant que paramètre, ainsi qu'un entier $id correspondant à l'identifiant du créneau à ajouter au panier ET $session est un objet qui implémente l'interface SessionInterface(pour interagir avec la session HTTP en cours.manupiler les données de session dans l'application).
 
 #[Route('/panier/ajouter/{id}', name: 'add_to_cart')]
-    public function add(Cart $cart, int $id): Response
+    public function add(Cart $cart, int $id, SessionInterface $session): Response
     {
-        //est appelée pour ajouter l'article spécifié par l'ID au panier
+        //méthode addToCart est appelée pour ajouter l'article spécifié par l'ID au panier
         $cart->addToCart($id);
 
         //La méthode $cart->getDetails()est appelée pour récupérer les détails du panier après l'ajout de l'article.
         $cartDetails = $cart->getDetails();
 
-        //Calcul de la quantité totale d'articles dans le panier :
+        //initialise une variable $nb(pour stocker le nombre total d'articles dans le panier) à zéro.
         $nb = 0;
 
-        //Une boucle foreach itère sur les créneaux du panier ($cartDetails['creneaux']).
+        // Cette ligne ajoute la quantité du créneau ajouté au panier à la variable $nb. Ainsi, $nb contiendra la nouvelle quantité totale d'articles dans le panier après l'ajout du créneau.
+
+         $nb += $cartDetails['totals']['quantity'];
+
+        //Cette ligne retourne une réponse JSON contenant deux clés :
+          **'nb': La nouvelle quantité totale d'articles dans le panier.
+          **'message': Le message indiquant que l'ajout au panier a réussi.
+        $session->set('nb', $nb);
+        $message = "Vous avez bien réservé ce creneaux.";
+        return $this->json(["nb" => $nb, 'message' => $message]);
+
+      <!-- Une boucle foreach itère sur les créneaux du panier ($cartDetails['creneaux']).
           Pour chaque créneau, la quantité de cet article est ajoutée à la variable $nb.
         foreach ($cartDetails['creneaux'] as $value){
             $nb += $value["quantity"];
         }
-        //pour renvoyer la quantité totale d'articles dans le panier au format JSON.
-        return $this->json($nb);
+     pour renvoyer la quantité totale d'articles dans le panier au format JSON.
+        return $this->json($nb); -->
     }
 
     3.REDUIRE QTE D'AERTICLE DANS LE PANIER
 
     // méthode sera appelée lorsqu'un utilisateur accède à l'URL /panier/réduire/{id} et le nom de route associé est 'decrease_item'.
 
-    #[Route('/panier/réduire/{id}', name: 'decrease_item')]
+    <!-- #[Route('/panier/réduire/{id}', name: 'decrease_item')]
     public function decrease(Cart $cart, int $id): Response
     {
 
         //La méthode $cart->decreaseItem($id) est appelée pour réduire la quantité de l'article spécifié 
         $cart->decreaseItem($id);
         return $this->redirectToRoute('cart');
-    }
+    } -->
     
-    4. SUPPRIM ARTICKE DU PANIER
+    4. SUPPRIM ARTICKE DU PANIER  
 
-     #[Route('/panier/supprimer/{id}', name: 'remove_item')]
+    //{id} est un paramètre dynamique représentant l'identifiant de l'article à supprimer du panier
+    //prend deux arguments :
+    $cart: Un service Cart utilisé pour gérer le panier.
+    $id: L'identifiant de l'article à supprimer du panier. 
+
+     #[Route('/panier/remove/{id}', name: 'remove_item')]
     public function removeItem(Cart $cart, int $id): Response
     {
         //La méthode $cart->removeItem($id) est appelée pour supprimer l'article spécifié par l'ID du panier.
+
         $cart->removeItem($id);
         return $this->redirectToRoute('app_cart');
     }
@@ -1765,33 +1851,41 @@ return $this->render('cart/cart.html.twig', [
     lorsqu'on clique sur 
     ********<a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" class="btn ajax">Réserver</a>
 
-$( document ).ready(function() {
-    $("a.ajax").on("click", (evtClick) => {
-        //pour que la page ne soit pas rechargée
+$(document).ready(function() {
+    $("a.ajax").on("click", function(evtClick) {
         evtClick.preventDefault();
-        // il extrair l'URL du lien (href) sur lequel vous avez cliqué.
-        var href = evtClick.target.getAttribute("href");
-        //Il utilise $.ajax() pour effectuer une requête AJAX vers cette URL. Cette requête est de type GET car elle récupère des données à partir de l'URL
+
+        //$(this) fait référence au lien sur lequel l'utilisateur a cliqué.
+        //.attr("href") récupère la valeur de l'attribut "href" du lien, qui est l'URL vers laquelle le lien pointe.
+
+        var href = $(this).attr("href");
+
+        //.data("id-creneau") récupère la valeur de l'attribut de données HTML "data-id-creneau" du lien, qui stocke l'identifiant du créneau.
+
+        var id_creneau = $(this).data("id-creneau");
+
+        //Le lien "Réserver" est masqué  pour éviter que l'utilisateur ne clique plusieurs fois dessus
+        $(this).hide();
+        //Un élément avec l'identifiant pris_{{ creneau.id }} est affiché
+        $("#pris_" + id_creneau).show();
+        
         $.ajax({
-        url: href,
-        // La réponse attendue est au format JSON
-        dataType: "json",
-        //Lorsque la requête AJAX est réussie (c'est-à-dire que le serveur a répondu avec succès), la fonction success est appelée avec la réponse JSON
-        success: (response) => {
-            // alert(response);
-            $("#nombre").html(response.nb);
-            if(response.message == "Votre créneau est déjà dans le panier") {
-           $('#deja_panier').html("<div class='alert alert-danger'> <p>" + response.message + "</p></div>")
-            } else {
-                $('#deja_panier').html('<div class="alert alert-success" role="alert"> <p>' + response.message + '</p></div>');
-            }
-        },
-        //Si la requête AJAX échoue, la fonction error est appelée et affiche un message d'erreur dans la console du navigateur.
-        error: (jqXHR, status, error) => {
-            console.log("ERREUR AJAX", status, error);
-        },
+            url: href,
+            //reponse attendue en json
+            dataType: "json",
+            success: function(response) {
+                //La quantité totale de créneaux dans le panier est mise à jour avec la valeur renvoyée par la requête
+                $("#nombre").html(response.nb);
+                //un message du succès
+                $("#deja_panier").addClass("alert alert-success").html(response.message);
+            },
+            error: function(jqXHR, status, error) {
+                console.log("ERREUR AJAX", status, error);
+            },
         });
     });
+});
+
 });
 
 
@@ -1799,3 +1893,4 @@ $( document ).ready(function() {
 
 
 
+<!-- https://chat.openai.com/c/5dec8beb-7e41-4715-baad-e504ecef9336 -->

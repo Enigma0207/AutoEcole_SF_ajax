@@ -99,7 +99,11 @@ class Cart
             return $cartCreneaux;
         }
      
-     
+      /**
+     * suprimer un élément du panier en session e
+     *
+     * @return void
+     */
          
     public function removeItem(int $id): void
     {
@@ -111,22 +115,32 @@ class Cart
             if ($creneau->getId() == $id) {
 
                 unset($cartDetails['creneaux'][$key]);
+                //récupère le nombre actuel d'articles dans le panier
                 $nb = $this->requestStack->getSession()->get('nb', 0);
+                //le nombre d'articles dans le panier est supérieur à zéro
                 if ($nb > 0) {
                     $nb--;
                     if ($nb > 0) {
+                        //récupère le nombre actuel d'articles dans le panier
                         $this->requestStack->getSession()->set('nb', $nb);
                     } else {
-                        $this->requestStack->getSession()->remove('nb'); // Supprimer la variable 'nb' si elle est égale à zéro
+                         // Supprimer la variable 'nb' si elle est égale à zéro
+                        $this->requestStack->getSession()->remove('nb');
                     }
                 }
 
                 // Mise à jour des totaux
+
+                //si les totaux du panier existent.
                 if (isset ($cartDetails['totals'])) {
+                //On décrémente la quantité totale d'articles dans les totaux du panier.
                     $cartDetails['totals']['quantity']--;
+                    //n soustrait du prix total du panier le prix de l'article que l'on va supprimer.
                     $cartDetails['totals']['price'] -= $creneau->getPermis()->getPrice();
                 }
+                //supprimer l'article du panier en utilisant son identifiant comme clé dans le tableau $cart
                 unset($cart[$creneau->getId()]);
+                //met à jour le panier en session avec le nouveau panier où l'article a été supprimé.
                 $this->requestStack->getSession()->set('cart', $cart);
                 return; // Sortir de la boucle une fois que l'élément est supprimé
             }

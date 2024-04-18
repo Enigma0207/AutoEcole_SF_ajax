@@ -117,15 +117,19 @@ $(document).ready(function() {
         evtClick.preventDefault();
         var href = $(this).attr("href");
         var id_creneau = $(this).data("id-creneau");
-        
+        //Le lien "Réserver" est masqué  pour éviter que l'utilisateur ne clique plusieurs fois dessus
         $(this).hide();
+        //Un élément avec l'identifiant pris_{{ creneau.id }} est affiché
         $("#pris_" + id_creneau).show();
         
         $.ajax({
             url: href,
+            //reponse attendue en json
             dataType: "json",
             success: function(response) {
+                //La quantité totale de créneaux dans le panier est mise à jour avec la valeur renvoyée par la requête
                 $("#nombre").html(response.nb);
+                //un message du succès
                 $("#deja_panier").addClass("alert alert-success").html(response.message);
             },
             error: function(jqXHR, status, error) {
