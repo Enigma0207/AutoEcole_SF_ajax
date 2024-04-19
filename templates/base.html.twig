@@ -62,9 +62,6 @@
                          </li> 
                         {% endif %}
                       </li>
-                       {# <li >
-                          <a class="navLien" href="#">About</a>
-                      </li>  #}
                       {% if app.user and 'ROLE_ELEVE' in app.user.roles %}
                         <li>
                           <a  href="{{ path('app_cart') }}">

@@ -45,7 +45,10 @@
                     <tbody class="table-group-divider">
                     {% for creneau in creneauxes %}
                         {% if creneau.isAvailable or (creneau.userEleve is defined and creneau.userEleve.id is defined and creneau.userEleve.id == app.user.id) or is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR') %}
+                        {# 
+                        {% if creneau.isAvailable or (creneau.userEleve is defined and attribute(creneau.userEleve, 'id') == app.user.id) or is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR') %}
 
+                         #}
                             <tr>
                                 <td>{{ creneau.date ? creneau.date|date('Y-m-d H:i:s') : '' }}</td>
                                 <td>{{ creneau.isAvailable ? 'Yes' : 'No' }}</td>
@@ -130,6 +133,7 @@ $(document).ready(function() {
                 //La quantité totale de créneaux dans le panier est mise à jour avec la valeur renvoyée par la requête
                 $("#nombre").html(response.nb);
                 //un message du succès
+                //un message du succèsE  
                 $("#deja_panier").addClass("alert alert-success").html(response.message);
             },
             error: function(jqXHR, status, error) {

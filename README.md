@@ -1181,6 +1181,65 @@ confirm('Are you sure you want to delete this item?') affiche une boîte de dial
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ creneaux.id) }}">
     <button class="btn">Delete</button>
 </form>
+
+
+
+<!-- list.html.twig -->
+
+
+<tbody class="table-group-divider">
+{% for creneau in creneauxes %}
+    {% if creneau.isAvailable or (creneau.userEleve is defined and creneau.userEleve.id is defined and creneau.userEleve.id == app.user.id) or is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR'
+        <tr>
+            <td>{{ creneau.date ? creneau.date|date('Y-m-d H:i:s') : '' }}</td>
+            <td>{{ creneau.isAvailable ? 'Yes' : 'No' }}</td>
+            <td>{{ creneau.user is not null ? creneau.user.firstname : '' }}</td>
+            
+            {% if is_granted('ROLE_ELEVE') %}
+                {% if creneau.userEleve.id is defined and creneau.userEleve.id == app.user.id %}
+                    <td>{{ app.user.firstname }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% elseif is_granted('ROLE_ADMIN') or is_granted('ROLE_MONITEUR') %}
+                <td>{{ creneau.userEleve.id is defined ? creneau.userEleve.firstname : '' }}</td>
+            {% else %}
+                <td></td>
+            {% endif
+            <td>{{ creneau.permis.type }}</td>
+            <td>{{ creneau.permis.price }}</td>
+            <td>
+                {% if 'ROLE_ADMIN' in app.user.roles %}
+                    {% if creneau.isAvailable %}
+                        <a class="btn userLien" href="{{ path('app_creneaux_edit', {'id': creneau.id}) }}">Edit</a>
+                        <a class="btn userLien" href="{{ path('app_creneaux_delete', {'id': creneau.id}) }}">Delete</a>
+                    {% elseif not creneau.isAvailable %}
+                        <a class="btn userLienDelet" href="{{ path('app_cancel', {'id': creneau.id}) }}">Annuler</a>
+                    {% endif %}
+                    {# {{ dump(app.session.get('cart')[ creneau.id ])}} #}
+
+                    // vérifier si celui qui est connecté à le role ELEVE//
+
+                {% elseif 'ROLE_ELEVE' in app.user.roles %}
+                //si le créneau est dispo
+                    {% if creneau.isAvailable %}
+                    //si le créneau actuel n'est pas déjà dans le panier de l'utilisateur
+                        {% if (app.session.get('cart')[ creneau.id ] is not defined) %}
+                            <a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" data-id-creneau = "{{creneau.id}}" id="reserver_{{creneau.id}}" class="btn ajax">Réserver</a>
+                            <span id="pris_{{ creneau.id }}" style="display: none;">pris</span>
+                        {% else %}
+                            <span> pris</span>    
+                        {% endif %} 
+                    {% else %}
+                        <span> Réservé</span>    
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+
+
+
+
 *********************PANIER******************************
 -CART CONTROLLER:
 A.index:pour afficher le panier
@@ -1851,7 +1910,17 @@ public function addToCart(int $id):void
     lorsqu'on clique sur 
     ********<a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" class="btn ajax">Réserver</a>
 
+//$(document).ready(function() { ... }) permet de s'assurer que le code JavaScript à l'intérieur de la fonction sera exécuté une fois que le document HTML est complètement chargé
+
+//$() : C'est une fonction jQuery qui permet de sélectionner des éléments du DOM.
+//document : C'est l'objet représentant l'ensemble du document HTML.
+//.ready() : C'est une méthode jQuery qui attend que le document soit chargé avant d'exécuter la fonction qu'elle contient.
+//function() { ... } : C'est la fonction à exécuter lorsque le document est prêt.
+
 $(document).ready(function() {
+
+    //sélectionne tous les éléments <a> qui ont la classe CSS "ajax".
+    // on.()attache un gestionnaire d'événements pour l'événement "click" à tous les éléments <a> sélectionnés. 
     $("a.ajax").on("click", function(evtClick) {
         evtClick.preventDefault();
 
@@ -1875,8 +1944,12 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 //La quantité totale de créneaux dans le panier est mise à jour avec la valeur renvoyée par la requête
+                //$("#nombre") : Cela sélectionne l'élément HTML avec l'ID "nombre" en utilisant jQuery.
+                //.html(response.nb) : Cela remplace le contenu HTML de l'élément sélectionné par la valeur
                 $("#nombre").html(response.nb);
                 //un message du succès
+                //Cette partie sélectionne l'élément HTML avec l'ID "deja_panier" à l'aide de jQuery, puis lui ajoute deux classes CSS supplémentaires : "alert" et "alert-success". 
+                //.html(response.message) est utilisé pour remplacer le contenu HTML de l'élément sélectionné par le contenu de response.message.
                 $("#deja_panier").addClass("alert alert-success").html(response.message);
             },
             error: function(jqXHR, status, error) {
@@ -1893,4 +1966,20 @@ $(document).ready(function() {
 
 
 
-<!-- https://chat.openai.com/c/5dec8beb-7e41-4715-baad-e504ecef9336 -->
+<!-- 
+POUR BOUTON RESERVER
+
+
+je ne comprends pas ce code:<a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" data-id-creneau = "{{creneau.id}}" id="reserver_{{creneau.id}}" class="btn ajax">Réserver</a>
+ChatGPT
+D'accord, plongeons dans cette ligne de code en la décortiquant :
+
+<a href="{{ path('add_to_cart', {'id': creneau.id}) }}": C'est une balise de lien HTML (<a>), où l'attribut href spécifie l'URL vers laquelle le lien pointe. Dans ce cas, l'URL est générée dynamiquement à l'aide de la fonction path(). Cette fonction est probablement fournie par un framework web comme Symfony. Elle génère l'URL en fonction du nom de la route 'add_to_cart' et d'un paramètre 'id' avec la valeur de creneau.id. Cela signifie que chaque lien généré aura une URL unique qui inclut l'identifiant spécifique du créneau (creneau.id).
+data-id-creneau="{{creneau.id}}": C'est un attribut de données HTML (data-id-creneau) qui stocke l'identifiant du créneau (creneau.id). Cet attribut de données est utilisé pour stocker des informations personnalisées dans l'élément HTML. Dans ce cas, il semble être utilisé pour stocker l'identifiant du créneau afin de pouvoir l'utiliser ultérieurement dans du code JavaScript.
+id="reserver_{{creneau.id}}": C'est l'attribut id de l'élément HTML. L'attribut id est utilisé pour identifier de manière unique un élément dans le document HTML. Dans ce cas, l'identifiant est défini comme "reserver_" suivi de l'identifiant du créneau (creneau.id). Cela signifie que chaque lien aura un identifiant unique qui peut être utilisé pour cibler spécifiquement cet élément en CSS ou en JavaScript.
+class="btn ajax": C'est l'attribut de classe de l'élément HTML. La classe btn est souvent utilisée pour styliser l'élément comme un bouton, tandis que la classe ajax semble être utilisée pour identifier ce lien comme déclencheur d'une requête AJAX. Cela signifie que ce lien est probablement utilisé pour effectuer des opérations en arrière-plan sans recharger la page entière.
+Réserver: C'est le texte visible à l'intérieur du lien. Dans ce cas, le texte "Réserver" est affiché, ce qui indique à l'utilisateur que ce lien est utilisé pour réserver quelque chose (probablement un créneau horaire dans ce contexte).
+
+
+
+ -->
