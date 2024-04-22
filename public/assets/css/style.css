@@ -181,6 +181,21 @@ nav {
     margin-bottom: 25px;
     margin-top: 50px;
 }
+
+.homeBoucle{
+    border: solid black 1px;
+    margin: 10px;
+    border-radius: 7px;
+    width: 400px; /* Ajustez la largeur des éléments selon vos besoins */
+    margin: 10px; /* Espace entre les éléments */
+    display: flex;
+    flex-direction: column;
+   
+}
+.homeFlexBoucle{
+    /* display: flex; */
+    flex-direction: column;
+}
 .generalH4Detail{
     margin: auto;
     width: 220px;
