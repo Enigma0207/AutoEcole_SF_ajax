@@ -20,8 +20,6 @@ class Cart
         $this->requestStack = $requestStack;
         $this->repository = $repository;
     }
-
-
     /**
      * Crée un tableau associatif id => quantité et le stocke en session
      *
@@ -43,20 +41,15 @@ class Cart
       // Retourner true pour indiquer que la redirection doit être effectuée
       return true;
     }
-
-
     /**
      * Récupère le contenu du panier en session
      *
      * @return array
      */
-    
     public function get(): array
     {
         return $this->requestStack->getSession()->get('cart');
     }
-   
-
     /**
           * Récupère le panier en session, puis récupère les objets créneaux de la bdd
           * et calcule les totaux
@@ -66,14 +59,6 @@ class Cart
     public function getDetails(): array
         {
             $cartCreneaux = ['creneaux' => [],'totals' => ['quantity' => 0,'price' => 0,],];
-            // $cartCreneaux = [
-            //     'creneaux' => [],
-            //     'totals' => [
-            //         'quantity' => 0,
-            //         'price' => 0,
-            //     ],
-            // ];
-       
             $cart = $this->requestStack->getSession()->get('cart', []);
             if ($cart) {
                 // Itération sur chaque élément du panier ($cart) où $id est l'identifiant du créneau et $quantity est sa quantité
@@ -104,16 +89,13 @@ class Cart
      *
      * @return void
      */
-         
     public function removeItem(int $id): void
     {
         $cart = $this->requestStack->getSession()->get('cart', []);
         $cartDetails = $this->getDetails();
 
         foreach ($cartDetails['creneaux'] as $key => $creneau) {
-            
             if ($creneau->getId() == $id) {
-
                 unset($cartDetails['creneaux'][$key]);
                 //récupère le nombre actuel d'articles dans le panier
                 $nb = $this->requestStack->getSession()->get('nb', 0);

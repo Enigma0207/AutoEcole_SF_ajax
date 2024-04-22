@@ -8,8 +8,9 @@
            <div class="generalHomeH4 " >
               <h4 >Nos Services</h4>
            </div>
+           <div class="row row-cols-1 row-cols-md-3 g-2 mx-auto" style="max-width: 900px;">
             {% for home in permis %}
-            <div class="card mb-3" style="max-width: 540px;">
+            {# <div class="card mb-3" style="max-width: 540px;">
                     <div class="row g-0">
                       <div class="col-md-8">
                         <img src="{{ asset('images/' ~ home.image) }}" class="img-fluid rounded-start" alt="...">
@@ -24,10 +25,29 @@
                         </div>
                       </div>
                     </div>
+            </div> #}
+            <div class="col">
+                <div class="card">
+                    {% if home.image %}
+                    <img src="{{ asset('images/' ~ home.image) }}" class="card-img-top" alt="{{ home.id }}">
+                    {% else %}
+                      Pas d'image
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ home.type }}</h5>
+                        <h5 class="card-title">{{ home.price | default('') | upper }}<span>€</span></h5>
+                        <p class="card-text">{{ home.description | default('') | upper }}</p>
+                        <a class="btn userLien" href="{{ path('app_edit_permis', {'id': home.id}) }}">Edit</a>
+                        <a class="btn userLienDelet" href="{{ path('app_permis_delete', {'id': home.id}) }}">Delete</a>
+
+                    </div>
+                </div>
             </div>
             {% endfor %}
-        </div>
-    </div>
+      </div>
+      </div>
+      
+  
      {% include 'footer.html.twig' %}
 
 {% endblock %}

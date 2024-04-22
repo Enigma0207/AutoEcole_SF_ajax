@@ -80,7 +80,7 @@
                                     {% elseif 'ROLE_ELEVE' in app.user.roles %}
                                         {% if creneau.isAvailable %}
                                             {% if (app.session.get('cart')[ creneau.id ] is not defined) %}
-                                                <a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" data-id-creneau = "{{creneau.id}}" id="reserver_{{creneau.id}}" class="btn ajax">Réserver</a>
+                                                <a  href="{{ path('add_to_cart', {'id': creneau.id}) }}" data-id-creneau = "{{creneau.id}}" class="btn ajax">Réserver</a>
                                                 <span id="pris_{{ creneau.id }}" style="display: none;">pris</span>
                                             {% else %}
                                                 <span> pris</span>    
@@ -122,11 +122,10 @@ $(document).ready(function() {
         var id_creneau = $(this).data("id-creneau");
         //Le lien "Réserver" est masqué  pour éviter que l'utilisateur ne clique plusieurs fois dessus
         $(this).hide();
-        //Un élément avec l'identifiant pris_{{ creneau.id }} est affiché
         $("#pris_" + id_creneau).show();
-        
         $.ajax({
             url: href,
+            type:'get',
             //reponse attendue en json
             dataType: "json",
             success: function(response) {

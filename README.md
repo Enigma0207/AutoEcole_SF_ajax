@@ -1921,7 +1921,7 @@ $(document).ready(function() {
 
     //sélectionne tous les éléments <a> qui ont la classe CSS "ajax".
     // on.()attache un gestionnaire d'événements pour l'événement "click" à tous les éléments <a> sélectionnés. 
-    $("a.ajax").on("click", function(evtClick) {
+    $("a.").on("click", function(evtClick) {
         evtClick.preventDefault();
 
         //$(this) fait référence au lien sur lequel l'utilisateur a cliqué.
