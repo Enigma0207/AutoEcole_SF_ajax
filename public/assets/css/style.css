@@ -20,6 +20,7 @@ body a,th{
 .MinWidthGeneral{
     min-height: 100vh;
     position: relative;
+    width: 100%;
 }
 
  span{
@@ -28,8 +29,15 @@ body a,th{
 
 /************** header **********************/
 
- 
 
+ 
+.d-inline-block{
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;  
+}
+.d-inline-block:hover{
+  transform: scale(1.1);  
+}
 /* *************NAV********************** */
 nav {
       height: 80px;
@@ -173,7 +181,6 @@ nav {
 .generalHome{
     margin-top: 90px;
     margin: auto;
-    width: 500px;
 }
 .generalHomeH4{
     margin: auto;
@@ -182,26 +189,70 @@ nav {
     margin-top: 50px;
 }
 
-.homeBoucle{
-    border: solid black 1px;
-    margin: 10px;
-    border-radius: 7px;
-    width: 400px; /* Ajustez la largeur des éléments selon vos besoins */
-    margin: 10px; /* Espace entre les éléments */
-    display: flex;
-    flex-direction: column;
-   
-}
-.homeFlexBoucle{
-    /* display: flex; */
-    flex-direction: column;
-}
+
+
 .generalH4Detail{
     margin: auto;
     width: 220px;
     margin-top: 20px;
 }
 
+.carte1{
+    /* border: #721c24 solid 1px; */
+    width: 60%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 150px;
+
+}
+.carte{
+    
+     width:450px; /* Réduire la largeur des éléments */
+    border-radius: 7px;
+    border: 1px black solid;
+    margin-bottom: 25px;
+    margin-right: 25px;
+    
+}
+.carte{
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;  
+    
+}
+.carte:hover{
+  transform: scale(1.1);
+    
+}
+.cartetext1{
+    padding: 20px;
+   
+}
+
+.carte img{
+    width: 100%;
+   
+}
+/* 
+.montresAcceuil {
+  border: 3px solid purple;
+  border-radius: 15px;
+  width: 540px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 30px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+  display:flex ;
+  flex-direction: column;
+  align-items: center;
+}
+
+.montresAcceuil:hover {
+  transform: scale(1.1);
+}
+*/
 
 .lien{
     border-radius:7px;
@@ -431,3 +482,119 @@ width: 270px;
  
 }
 
+
+
+@media (min-width:1634px) and (max-width: 1835px){
+  .MinWidthGeneral{
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+   }
+
+ .carte1{
+    /* border: #721c24 solid 1px; */
+    width: 60%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    /* padding-left: 100px; */
+
+  }
+  .carte{
+    
+    width:390px; /* Réduire la largeur des éléments */
+    border-radius: 7px;
+    border: 1px black solid;
+    /* margin-bottom: 25px; */
+    /* margin-right: 5px; */
+    
+  }
+
+
+
+    
+}
+
+@media (min-width:1200px) and (max-width: 1633px){
+  .MinWidthGeneral{
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+   }
+
+ .carte1{
+    /* border: #721c24 solid 1px; */
+    width: 60%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+  }
+  .carte{
+    
+    width:250px; /* Réduire la largeur des éléments */
+    border-radius: 7px;
+    border: 1px black solid;
+    
+  }
+
+
+
+    
+}
+
+@media (min-width:700px) and (max-width: 1199px){
+  .MinWidthGeneral{
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+   }
+
+ .carte1{
+    /* border: #721c24 solid 1px; */
+    width: 60%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+  }
+  .carte{
+    
+    width:190px; /* Réduire la largeur des éléments */
+    border-radius: 7px;
+    border: 1px black solid;
+    
+  }
+
+
+
+    
+}
+@media (max-width: 699px){
+  .MinWidthGeneral{
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+   }
+
+ .carte1{
+    /* border: #721c24 solid 1px; */
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    border: solid black 2px;
+
+  }
+  .carte{
+    
+    width:500px; /* Réduire la largeur des éléments */
+    border-radius: 7px;
+    border: 1px black solid;
+    
+  }
+
+
+
+    
+}

@@ -5,26 +5,25 @@
 {% block body %}
     <div class="MinWidthGeneral " >
         <div class="generalHome " >
-           <div class="generalHomeH4 " >
-              <h4 >Nos Services</h4>
-           </div>
-              {% for home in permis %}
-          <div class="homeBoucle">
-              <div >
-                <img src="{{ asset('images/' ~ home.image) }}"  alt="...">
-              </div>
-              <div >
-                  <h5 > {{ home.type | default('') | upper }}</h5>
-                  <h4 >€{{ home.price }}</h4>
-                  <a class="btn lienHome" href="{% if app.user is null %}{{ path('app_user') }}{% elseif 'ROLE_ELEVE' in app.user.roles or 'ROLE_MONITEUR' in app.user.roles %}{{ path('app_creneaux_index') }}{% else %}{{ path('app_permis') }}{% endif %}">choisir</a>
-                  <a class="btn lienHome" href="{{ path('app_detail', {'id': home.id}) }}">détail</a>
-              </div>
-          </div> 
+            <div class="generalHomeH4 " >
+                <h4 >Nos Services</h4>
+            </div>
+            <div class="carte1">
+            {% for home in permis %}
+                    <div class="carte">
+                            <div >
+                              <img src="{{ asset('images/' ~ home.image) }}"  alt="...">
+                            </div>
+                            <div class="cartetext1">
+                                <h5 > {{ home.type | default('') | upper }}</h5>
+                                <h4 >€{{ home.price }}</h4>
+                                <a class="btn lienHome" href="{% if app.user is null %}{{ path('app_user') }}{% elseif 'ROLE_ELEVE' in app.user.roles or 'ROLE_MONITEUR' in app.user.roles %}{{ path('app_creneaux_index') }}{% else %}{{ path('app_permis') }}{% endif %}">choisir</a>
+                                <a class="btn lienHome" href="{{ path('app_detail', {'id': home.id}) }}">détail</a>
+                            </div>
+                    </div>   
             {% endfor %}
-      </div>
-      </div>
-      
-  
-     {% include 'footer.html.twig' %}
-
+            </div>   
+        </div>
+    </div>
+    {% include 'footer.html.twig' %}
 {% endblock %}
