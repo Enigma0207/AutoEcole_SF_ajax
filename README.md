@@ -16,6 +16,27 @@ Il assure également la gestion des relations entre entités.
 6.Repository :Les repositories sont des classes fournies par Doctrine qui permettent d'effectuer des requêtes sur les entités
 
 7.AbstractController : c'est une classe abstraite fournie par le framework Symfony. Une classe abstraite est une classe qui ne peut pas être instanciée directement, mais qui sert de modèle pour d'autres classes (dites classes dérivées ou sous-classes). AbstractController pourrait contenir des fonctionnalités de base nécessaires pour les contrôleurs dans le cadre du framework.
+8. enlever symfony de l'ecran
+
+config/package/web profiler
+
+when@dev:
+    web_profiler:
+        toolbar: false/ true******
+        intercept_redirects: false
+
+    framework:
+        profiler:
+            only_exceptions: false
+            collect_serializer_data: true
+
+when@test:
+    web_profiler:
+        toolbar: false
+        intercept_redirects: false
+
+    framework:
+        profiler: { collect: false }
 
 ***création d'un nouveau projet:
 $ symfony new Auto_EcoleSF --version="6.4.*" --webapp (dans bash)
